@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import java.util.HashMap;
@@ -13,12 +14,36 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity {
 
     final String TAG = "main";
+    static int speedbar = 1200;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ((SeekBar) findViewById(R.id.speedbar)).setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                // TODO Auto-generated method stub
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                // TODO Auto-generated method stub
+            }
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress,boolean fromUser) {
+                // TODO Auto-generated method stub
+                switch (progress) {
+                    case 0: speedbar = 60; break;
+                    case 1: speedbar = 120; break;
+                    case 2: speedbar = 240; break;
+                    case 3: speedbar = 1200; break;
+                    default: speedbar = 1000; break;
+                }
+            }
+        });
     }
 
 
@@ -27,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                morse(inputtext.getText().toString(),440, 300);
+                morse(inputtext.getText().toString(),440, speedbar);
                 updateinfo(100,"MORSE","made by JJ");
             }
         }).start();

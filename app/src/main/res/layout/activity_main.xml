@@ -42,19 +42,19 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:onClick="encodebuttonclick"
-        android:text="Encode!"
-        app:layout_constraintBottom_toTopOf="@+id/seekBar"
+        android:text="Morse!"
+        app:layout_constraintBottom_toTopOf="@+id/speedbar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent" />
 
     <SeekBar
-        android:id="@+id/seekBar"
+        android:id="@+id/speedbar"
         android:layout_width="314dp"
         android:layout_height="28dp"
         android:layout_marginBottom="28dp"
-        android:max="10"
-        android:progress="5"
+        android:max="3"
+        android:progress="2"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.494"
@@ -94,4 +94,5 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/currentmorseletter" />
+
 </android.support.constraint.ConstraintLayout>

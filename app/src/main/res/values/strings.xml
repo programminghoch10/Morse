@@ -1,4 +1,4 @@
 <resources>
     <string name="app_name">Morse</string>
-    <string name="defaultText">Nachricht</string>
+    <string name="defaultText">Message</string>
 </resources>
