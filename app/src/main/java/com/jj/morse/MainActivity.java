@@ -151,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
         int counter = 1;
         for (final char character: cleartext.toUpperCase().toCharArray()) {
             if (Character.toString(character).equals(" ") || morse.get(Character.toString(character)) == null) {
-                updateinfo(counter*100/(cleartext.length()+1), "Leerzeichen","");
+                updateinfo(counter*100/(cleartext.length()+1), "space","");
                 try {Thread.sleep(morse.get("WORD")* speedbar);} catch (InterruptedException e) {e.printStackTrace();}
             } else {
                 String currentmorse = "";
