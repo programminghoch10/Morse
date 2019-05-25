@@ -14,7 +14,7 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity {
 
     final String TAG = "main";
-    static int speedbar = 1200;
+    static int speedbar = 240;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
                     case 3: speedbar = 1200; break;
                     default: speedbar = 1000; break;
                 }
+                ((TextView)findViewById(R.id.speedtext)).setText("Speed: "+speedbar+"ms");
             }
         });
     }
@@ -52,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                morse(inputtext.getText().toString(),440, speedbar);
+                morse(inputtext.getText().toString(),440);
                 updateinfo(100,"MORSE","made by JJ");
             }
         }).start();
@@ -146,24 +147,24 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    public void morse(String cleartext, int frequency, int speedmultiplier) {
+    public void morse(String cleartext, int frequency) {
         int counter = 1;
         for (final char character: cleartext.toUpperCase().toCharArray()) {
             if (Character.toString(character).equals(" ") || morse.get(Character.toString(character)) == null) {
                 updateinfo(counter*100/(cleartext.length()+1), "Leerzeichen","");
-                try {Thread.sleep(morse.get("WORD")* speedmultiplier);} catch (InterruptedException e) {e.printStackTrace();}
+                try {Thread.sleep(morse.get("WORD")* speedbar);} catch (InterruptedException e) {e.printStackTrace();}
             } else {
                 String currentmorse = "";
                 for (char current : String.valueOf(morse.get(Character.toString(character))).toCharArray()) {
                     int length = Integer.valueOf(Character.toString(current));
                     if (length > 1) {currentmorse += "-";} else { currentmorse += ".";}
-                    currentmorse += "";
+                    currentmorse += " ";
                 }
                 updateinfo(counter*100/(cleartext.length()+1),Character.toString(character),currentmorse);
                 for (char current : String.valueOf(morse.get(Character.toString(character))).toCharArray()) {
                     int length = Integer.valueOf(Character.toString(current));
-                    perfectTune.tonegen(length*speedmultiplier,frequency);
-                    try {Thread.sleep(morse.get("PAUSE")* speedmultiplier);} catch (InterruptedException e) {e.printStackTrace();}
+                    perfectTune.tonegen(length*speedbar,frequency);
+                    try {Thread.sleep(morse.get("PAUSE")* speedbar);} catch (InterruptedException e) {e.printStackTrace();}
                 }
             }
             counter += 1;
