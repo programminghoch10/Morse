@@ -1,4 +1,4 @@
-package com.jj.morse;
+package com.JJ.morse;
 
 import android.media.AudioFormat;
 import android.media.AudioManager;

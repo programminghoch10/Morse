@@ -1,4 +1,4 @@
-package com.jj.morse;
+package com.JJ.morse;
 
 import com.karlotoy.perfectune.instance.PerfectTune;
 

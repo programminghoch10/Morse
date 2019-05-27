@@ -1,8 +1,9 @@
-package com.jj.morse;
+package com.JJ.morse;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
@@ -15,6 +16,8 @@ public class MainActivity extends AppCompatActivity {
 
     final String TAG = "main";
     static int speedbar = 240;
+    static boolean active = false;
+    static Thread worker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
                     case 1: speedbar = 120; break;
                     case 2: speedbar = 240; break;
                     case 3: speedbar = 1200; break;
-                    default: speedbar = 1000; break;
+                    default: speedbar = 240; break;
                 }
                 ((TextView)findViewById(R.id.speedtext)).setText("Speed: "+speedbar+"ms");
             }
@@ -49,23 +52,35 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void encodebuttonclick(View view) {
+        if (active) {
+            active = false;
+            ((Button)findViewById(R.id.button)).setText("stopping...");
+            return;
+        }
         final EditText inputtext = (EditText)findViewById(R.id.textinput);
-        new Thread(new Runnable() {
+                worker = new Thread(new Runnable() {
             @Override
             public void run() {
-                morse(inputtext.getText().toString(),440);
-                updateinfo(100,"MORSE","made by JJ");
+                active = true;
+                boolean result = morse(inputtext.getText().toString(),440);
+                if (result) {
+                    updateinfo(100,"MORSE","made by JJ","Morse!");
+                    active = false;
+                } else {
+                    updateinfo(0,"MORSE","cancelled","Morse!");
+                }
             }
-        }).start();
+        });
+        worker.start();
     }
-
-    public void updateinfo(final int progress, final String currentmorsetext, final String currentmorse) {
+    public void updateinfo(final int progress, final String currentmorsetext, final String currentmorse, final String button) {
         runOnUiThread(new Runnable() {
             public void run() {
                 ((TextView)findViewById(R.id.currentmorseletter)).setText(currentmorsetext);
                 ((ProgressBar)findViewById(R.id.morseprogress)).setProgress(progress);
                 ((TextView)findViewById(R.id.progresstext)).setText(progress + " %");
                 ((TextView)findViewById(R.id.currentmorse)).setText(currentmorse);
+                ((Button)findViewById(R.id.button)).setText(button);
             }
         });
 
@@ -143,15 +158,16 @@ public class MainActivity extends AppCompatActivity {
             put("SOS", 111333111);
             put("HH", 11111111);
             put("PAUSE", 1);
+            put("LETTER", 3);
             put("WORD", 7);
         }
     };
 
-    public void morse(String cleartext, int frequency) {
+    public boolean morse(String cleartext, int frequency) {
         int counter = 1;
         for (final char character: cleartext.toUpperCase().toCharArray()) {
             if (Character.toString(character).equals(" ") || morse.get(Character.toString(character)) == null) {
-                updateinfo(counter*100/(cleartext.length()+1), "space","");
+                updateinfo(counter*100/(cleartext.length()+1), "space","","stop");
                 try {Thread.sleep(morse.get("WORD")* speedbar);} catch (InterruptedException e) {e.printStackTrace();}
             } else {
                 String currentmorse = "";
@@ -160,15 +176,21 @@ public class MainActivity extends AppCompatActivity {
                     if (length > 1) {currentmorse += "-";} else { currentmorse += ".";}
                     currentmorse += " ";
                 }
-                updateinfo(counter*100/(cleartext.length()+1),Character.toString(character),currentmorse);
+                updateinfo(counter*100/(cleartext.length()+1),Character.toString(character),currentmorse,"stop");
                 for (char current : String.valueOf(morse.get(Character.toString(character))).toCharArray()) {
                     int length = Integer.valueOf(Character.toString(current));
+                    if (!active) {return false;}
                     perfectTune.tonegen(length*speedbar,frequency);
                     try {Thread.sleep(morse.get("PAUSE")* speedbar);} catch (InterruptedException e) {e.printStackTrace();}
                 }
             }
+            if (!active) {return false;}
+            //updateinfo(counter*100/(cleartext.length()+1),"","pause","stop");
+            //updateinfo(counter*100/(cleartext.length()+1),"","","stop");
+            try {Thread.sleep(morse.get("LETTER")* speedbar);} catch (InterruptedException e) {e.printStackTrace();}
             counter += 1;
         }
+        return true;
     }
 }
 
