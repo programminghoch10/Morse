@@ -1,5 +1,5 @@
 package com.JJ.morse;
-
+/*
 import com.karlotoy.perfectune.instance.PerfectTune;
 
 public class perfectTune {
@@ -15,4 +15,4 @@ public class perfectTune {
         }
         soundgen.stopTune();
     }
-}
+}*/

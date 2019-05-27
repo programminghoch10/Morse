@@ -1,5 +1,6 @@
 package com.JJ.morse;
 
+import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -58,9 +59,10 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         final EditText inputtext = (EditText)findViewById(R.id.textinput);
-                worker = new Thread(new Runnable() {
+        worker = new Thread(new Runnable() {
             @Override
             public void run() {
+                Looper.prepare();
                 active = true;
                 boolean result = morse(inputtext.getText().toString(),440);
                 if (result) {
@@ -165,6 +167,7 @@ public class MainActivity extends AppCompatActivity {
 
     public boolean morse(String cleartext, int frequency) {
         int counter = 1;
+        soundgenerator2 soundgen = new soundgenerator2();
         for (final char character: cleartext.toUpperCase().toCharArray()) {
             if (Character.toString(character).equals(" ") || morse.get(Character.toString(character)) == null) {
                 updateinfo(counter*100/(cleartext.length()+1), "space","","stop");
@@ -180,7 +183,9 @@ public class MainActivity extends AppCompatActivity {
                 for (char current : String.valueOf(morse.get(Character.toString(character))).toCharArray()) {
                     int length = Integer.valueOf(Character.toString(current));
                     if (!active) {return false;}
-                    perfectTune.tonegen(length*speedbar,frequency);
+                    //perfectTune.tonegen(length*speedbar,frequency);
+                    ownsound.tonegen(length*speedbar,frequency);
+                    //soundgen.sonos(length*speedbar,frequency);
                     try {Thread.sleep(morse.get("PAUSE")* speedbar);} catch (InterruptedException e) {e.printStackTrace();}
                 }
             }

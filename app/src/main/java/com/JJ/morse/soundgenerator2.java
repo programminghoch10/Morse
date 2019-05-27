@@ -4,15 +4,18 @@ import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
 import android.os.Handler;
+import android.util.Log;
 
 public class soundgenerator2 {
 
     Handler handler = new Handler();
 
-    public void generatesound() {
-        double duration = 1;            // seconds
-        double freqOfTone = 440;       // hz
+    public void generatesound(double duration, double freqOfTone) {
+        //double duration = 1;            // seconds
+        //double freqOfTone = 440;       // hz
         int sampleRate = 8000;          // a number
+
+        Log.i("soundgenerator2", "generatesound: recieved function call");
 
         double dnumSamples = duration * sampleRate;
         dnumSamples = Math.ceil(dnumSamples);
@@ -70,11 +73,13 @@ public class soundgenerator2 {
                     AudioFormat.ENCODING_PCM_16BIT, (int)numSamples*2,
                     AudioTrack.MODE_STATIC);
             audioTrack.write(generatedSnd, 0, generatedSnd.length);        // Load the track
+            Log.i("soundgenerator2", "generatesound: playing track");
             audioTrack.play();                                             // Play the track
         }
         catch (Exception e){
             //RunTimeError("Error: " + e);
             //return false;
+            e.printStackTrace();
         }
 
         int x =0;
@@ -88,15 +93,13 @@ public class soundgenerator2 {
         if (audioTrack != null) audioTrack.release();                    // Track play done. Release track.
     }
 
-    public void sonos() {
+    public void sonos(final int millis, final double frequency) {
+        Log.i("soundgenerator2", "generatesound: creating secondary thread");
         final Thread thread = new Thread(new Runnable() {
+            @Override
             public void run() {
-                handler.post(new Runnable() {
-
-                    public void run() {
-                        generatesound();
-                    }
-                });
+                        Log.i("soundgenerator2", "generatesound: Thread running");
+                        generatesound((double)(millis/1000),frequency);
             }
         });
         thread.start();
