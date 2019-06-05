@@ -1,14 +1,23 @@
 package com.JJ.morse;
 
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.hardware.Camera;
 import android.os.Looper;
+import android.support.constraint.ConstraintLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
+
+import com.karlotoy.perfectune.instance.PerfectTune;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,11 +28,19 @@ public class MainActivity extends AppCompatActivity {
     static int speedbar = 240;
     static boolean active = false;
     static Thread worker;
+    static boolean flashavailable = false;
+    static boolean boxflash = false;
+    static boolean boxtone = false;
+    static boolean boxbackground = false;
+    static ConstraintLayout constraintLayout;
+    final Context maincontext = this;
+    static boolean flash = false;
 
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        flashavailable =  getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH);
+        constraintLayout = (ConstraintLayout)findViewById(R.id.constraintLayout);
         ((SeekBar) findViewById(R.id.speedbar)).setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
             @Override
@@ -38,7 +55,6 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress,boolean fromUser) {
-                // TODO Auto-generated method stub
                 switch (progress) {
                     case 0: speedbar = 60; break;
                     case 1: speedbar = 120; break;
@@ -46,13 +62,47 @@ public class MainActivity extends AppCompatActivity {
                     case 3: speedbar = 1200; break;
                     default: speedbar = 240; break;
                 }
+                switch (progress) {
+                    case 0: runOnUiThread(new Runnable() {
+                                public void run() {
+                                    ((CheckBox)findViewById(R.id.checkBoxflash)).setChecked(false);
+                                    ((CheckBox)findViewById(R.id.checkBoxflash)).setEnabled(false);
+                                }
+                            });
+                            break;
+                    case 1:
+                    case 2:
+                    case 3: runOnUiThread(new Runnable() {
+                                public void run() {
+                                    ((CheckBox)findViewById(R.id.checkBoxflash)).setEnabled(true);
+                                }
+                            });
+
+                            break;
+                    default: break;
+                }
                 ((TextView)findViewById(R.id.speedtext)).setText("Speed: "+speedbar+"ms");
+            }
+        });
+        final Context context = this;
+        ((CheckBox)findViewById(R.id.checkBoxbackground)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                boxbackground = ((CheckBox)findViewById(R.id.checkBoxbackground)).isChecked();
+                if (boxbackground) {
+                    constraintLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.dark));
+                } else {
+                    constraintLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.background));
+                }
             }
         });
     }
 
 
     public void encodebuttonclick(View view) {
+        boxflash = ((CheckBox)findViewById(R.id.checkBoxflash)).isChecked();
+        boxtone = ((CheckBox)findViewById(R.id.checkBoxsound)).isChecked();
+        boxbackground = ((CheckBox)findViewById(R.id.checkBoxbackground)).isChecked();
         if (active) {
             active = false;
             ((Button)findViewById(R.id.button)).setText("stopping...");
@@ -167,7 +217,59 @@ public class MainActivity extends AppCompatActivity {
 
     public boolean morse(String cleartext, int frequency) {
         int counter = 1;
-        soundgenerator2 soundgen = new soundgenerator2();
+
+        if(boxflash) {
+        Thread camworker;
+        camworker = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Camera camera = null;
+                Camera.Parameters p = null;
+                try {
+                    camera = Camera.open();
+                    p = camera.getParameters();
+                } catch (Exception e) {}
+                boolean prevflash = flash;
+                while (active) {
+                    if (boxflash && flash != prevflash) {
+                        if (flash) {
+                            prevflash = true;
+                            try {
+                                p.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+                                camera.setParameters(p);
+                                camera.startPreview();
+                            } catch (Exception e) {}
+                        } else {
+                            prevflash = false;
+                            try {
+                                p.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+                                camera.setParameters(p);
+                                camera.stopPreview();
+                            } catch (Exception e) {}
+                        }
+                    }
+                    if (prevflash && !boxflash) {
+                        prevflash = false;
+                        try {
+                            p.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+                            camera.setParameters(p);
+                            camera.stopPreview();
+                        } catch (Exception e) {}
+                    }
+                }
+                if (prevflash) {
+                    prevflash = false;
+                    try {
+                        p.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+                        camera.setParameters(p);
+                        camera.stopPreview();
+                    } catch (Exception e) {}
+                }
+            }
+        });
+        camworker.start();
+        }
+        //soundgenerator2 soundgen = new soundgenerator2();
         for (final char character: cleartext.toUpperCase().toCharArray()) {
             if (Character.toString(character).equals(" ") || morse.get(Character.toString(character)) == null) {
                 updateinfo(counter*100/(cleartext.length()+1), "space","","stop");
@@ -181,11 +283,40 @@ public class MainActivity extends AppCompatActivity {
                 }
                 updateinfo(counter*100/(cleartext.length()+1),Character.toString(character),currentmorse,"stop");
                 for (char current : String.valueOf(morse.get(Character.toString(character))).toCharArray()) {
+                    boxflash = ((CheckBox)findViewById(R.id.checkBoxflash)).isChecked();
+                    boxtone = ((CheckBox)findViewById(R.id.checkBoxsound)).isChecked();
+                    boxbackground = ((CheckBox)findViewById(R.id.checkBoxbackground)).isChecked();
                     int length = Integer.valueOf(Character.toString(current));
                     if (!active) {return false;}
-                    //perfectTune.tonegen(length*speedbar,frequency);
-                    ownsound.tonegen(length*speedbar,frequency);
-                    //soundgen.sonos(length*speedbar,frequency);
+                    flash = true;
+                    if (boxbackground) {
+                        runOnUiThread(new Runnable() {
+                            public void run() {
+                                constraintLayout.setBackgroundColor(ContextCompat.getColor(maincontext, R.color.light));
+                            }
+                        });
+                    }
+                    if(boxtone) {
+                        //using 2 soundengines because of each better performances in different speeds
+                        if (speedbar >= 240) {
+                            ownsound.tonegen(length * speedbar, frequency);
+                        } else {
+                            perfectTune.tonegen(length*speedbar,frequency);
+                            //soundgen.sonos(length*speedbar,frequency);
+                        }
+                    } else {
+                        try {
+                            Thread.sleep(length * speedbar);
+                        } catch (InterruptedException e) {}
+                    }
+                    flash = false;
+                    if (boxbackground) {
+                        runOnUiThread(new Runnable() {
+                            public void run() {
+                                constraintLayout.setBackgroundColor(ContextCompat.getColor(maincontext, R.color.dark));
+                            }
+                        });
+                    }
                     try {Thread.sleep(morse.get("PAUSE")* speedbar);} catch (InterruptedException e) {e.printStackTrace();}
                 }
             }
