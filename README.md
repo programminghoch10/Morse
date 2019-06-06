@@ -1,7 +1,7 @@
 # Morse
 a simple app made for text to morse conversion
 
-[Test APK](https://github.com/programminghoch10/Morse/raw/master/app/release/app-release.apk)
+[Download APK](https://github.com/programminghoch10/Morse/raw/master/app/release/app-release.apk)
 
 ## Features
 Morse is made to convert any given Text into Morse.
@@ -18,9 +18,10 @@ Morse is compliant with all 4 standarized speeds:
 * 120 ms
 * 240 ms
 * 1200 ms
+
 (ms per dit)
 
-The whole International Morse Alphabet is supported.
+The whole International Morse Alphabet is supported, every unsupported letter gets treated as a space.
 
 (as listed in this german Wikipedia entry: [Morse Tabelle](https://de.wikipedia.org/wiki/Morsezeichen#Standard-Codetabelle))
 
@@ -77,6 +78,16 @@ Morse uses 2 different sound libraries at the moment, because of each others bet
 The whole Morse Code is saved within a big Map.
 This makes it easier to manage and also enables requesting the morse code for a letter by using morse.get(Character)
 
+### Function encodebuttonclick:
+starts the whole morsing process including a second Thread or stops it if there is one running
+
+![visual representation of encodebuttonclick function 1.74MiB](https://github.com/programminghoch10/Morse/raw/master/documentation/encodebuttonclick.png)
+
+This function has an program structure plan available!
+[Download PAP](https://github.com/programminghoch10/Morse/raw/master/documentation/Morse.pap)
+or
+[Download/View PDF](https://github.com/programminghoch10/Morse/raw/master/documentation/morse.pdf)
+
 ### Function morse
 The function morse does everything interesting and is pretty important, so it gets its own description
 
@@ -91,12 +102,19 @@ The function morse does everything interesting and is pretty important, so it ge
       1. the empty dit between morsing signals is beeing waited
    1. The time between letters is beeing waited
 
+![visual representation of morse function 4.54MiB](https://github.com/programminghoch10/Morse/raw/master/documentation/morse.png)
+
+This function has an program structure plan available!
+[Download PAP](https://github.com/programminghoch10/Morse/raw/master/documentation/Morse.pap)
+or
+[Download/View PDF](https://github.com/programminghoch10/Morse/raw/master/documentation/morse.pdf)
+
 ### Permissions
-Morse only needs permission to camera for activating the flash, but it of course will also work fine without flash if the permission isn't there.
+Morse only needs permission to camera for activating the flash, but it of course works fine without flash if it hasn't got the permission yet.
 
 ### XML Files
 
-- strings.xml: the default message text is defined here
+- strings.xml: the default message text and the sound frequency in Hz is defined here
 - colors.xml: here are the standard colors defined
 - activity_main.xml: standard layout file for the main activity
 

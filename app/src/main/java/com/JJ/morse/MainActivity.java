@@ -114,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 Looper.prepare();
                 active = true;
-                boolean result = morse(inputtext.getText().toString(),440);
+                boolean result = morse(inputtext.getText().toString(),Integer.valueOf(getString(R.string.frequency)));
                 if (result) {
                     updateinfo(100,"MORSE","made by JJ","Morse!");
                     active = false;
@@ -299,7 +299,7 @@ public class MainActivity extends AppCompatActivity {
                     if(boxtone) {
                         //using 2 soundengines because of each better performances in different speeds
                         if (speedbar >= 240) {
-                            ownsound.tonegen(length * speedbar, frequency);
+                            ownsound.tonegen(length*speedbar, frequency);
                         } else {
                             perfectTune.tonegen(length*speedbar,frequency);
                             //soundgen.sonos(length*speedbar,frequency);

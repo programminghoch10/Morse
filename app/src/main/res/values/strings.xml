@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Morse</string>
     <string name="defaultInputText">Message</string>
+    <string name="frequency">440</string>
 </resources>
