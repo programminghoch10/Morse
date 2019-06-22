@@ -1,10 +1,12 @@
 package com.JJ.morse;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.os.Looper;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -36,10 +38,28 @@ public class MainActivity extends AppCompatActivity {
     final Context maincontext = this;
     static boolean flash = false;
 
+    static final int MY_PERMISSIONS_REQUEST_CAMERA = 77;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         flashavailable =  getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH);
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.READ_CONTACTS)) {
+
+                // Show an expanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+
+            } else {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.CAMERA},
+                        MY_PERMISSIONS_REQUEST_CAMERA);
+            }
+        }
         constraintLayout = (ConstraintLayout)findViewById(R.id.constraintLayout);
         ((SeekBar) findViewById(R.id.speedbar)).setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
@@ -54,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onProgressChanged(SeekBar seekBar, int progress,boolean fromUser) {
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 switch (progress) {
                     case 0: speedbar = 60; break;
                     case 1: speedbar = 120; break;
@@ -74,7 +94,9 @@ public class MainActivity extends AppCompatActivity {
                     case 2:
                     case 3: runOnUiThread(new Runnable() {
                                 public void run() {
-                                    ((CheckBox)findViewById(R.id.checkBoxflash)).setEnabled(true);
+                                    if (flashavailable) {
+                                        ((CheckBox)findViewById(R.id.checkBoxflash)).setEnabled(true);
+                                    }
                                 }
                             });
 
@@ -98,6 +120,34 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_CAMERA: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    flashavailable = getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH);
+                    // permission was granted, yay!
+                    if (flashavailable && speedbar >= 120) {
+                        ((CheckBox)findViewById(R.id.checkBoxflash)).setEnabled(true);
+                    }
+                } else {
+                    flashavailable = false;
+                    ((CheckBox)findViewById(R.id.checkBoxflash)).setChecked(false);
+                    ((CheckBox)findViewById(R.id.checkBoxflash)).setEnabled(false);
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
+    }
 
     public void encodebuttonclick(View view) {
         boxflash = ((CheckBox)findViewById(R.id.checkBoxflash)).isChecked();
@@ -109,6 +159,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         final EditText inputtext = (EditText)findViewById(R.id.textinput);
+
         worker = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -218,28 +269,37 @@ public class MainActivity extends AppCompatActivity {
     public boolean morse(String cleartext, int frequency) {
         int counter = 1;
 
-        if(boxflash) {
-        Thread camworker;
-        camworker = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Camera camera = null;
-                Camera.Parameters p = null;
-                try {
-                    camera = Camera.open();
-                    p = camera.getParameters();
-                } catch (Exception e) {}
-                boolean prevflash = flash;
-                while (active) {
-                    if (boxflash && flash != prevflash) {
-                        if (flash) {
-                            prevflash = true;
-                            try {
-                                p.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
-                                camera.setParameters(p);
-                                camera.startPreview();
-                            } catch (Exception e) {}
-                        } else {
+        if(flashavailable) {
+            Thread camworker;
+            camworker = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Camera camera = null;
+                    Camera.Parameters p = null;
+                    try {
+                        camera = Camera.open();
+                        p = camera.getParameters();
+                    } catch (Exception e) {}
+                    boolean prevflash = flash;
+                    while (active) {
+                        if (boxflash && flash != prevflash) {
+                            if (flash) {
+                                prevflash = true;
+                                try {
+                                    p.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+                                    camera.setParameters(p);
+                                    camera.startPreview();
+                                } catch (Exception e) {}
+                            } else {
+                                prevflash = false;
+                                try {
+                                    p.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+                                    camera.setParameters(p);
+                                    camera.stopPreview();
+                                } catch (Exception e) {}
+                            }
+                        }
+                        if (prevflash && !boxflash) {
                             prevflash = false;
                             try {
                                 p.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
@@ -248,7 +308,7 @@ public class MainActivity extends AppCompatActivity {
                             } catch (Exception e) {}
                         }
                     }
-                    if (prevflash && !boxflash) {
+                    if (prevflash) {
                         prevflash = false;
                         try {
                             p.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
@@ -257,17 +317,8 @@ public class MainActivity extends AppCompatActivity {
                         } catch (Exception e) {}
                     }
                 }
-                if (prevflash) {
-                    prevflash = false;
-                    try {
-                        p.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
-                        camera.setParameters(p);
-                        camera.stopPreview();
-                    } catch (Exception e) {}
-                }
-            }
-        });
-        camworker.start();
+            });
+            camworker.start();
         }
         //soundgenerator2 soundgen = new soundgenerator2();
         for (final char character: cleartext.toUpperCase().toCharArray()) {
@@ -293,6 +344,11 @@ public class MainActivity extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                             public void run() {
                                 constraintLayout.setBackgroundColor(ContextCompat.getColor(maincontext, R.color.light));
+                                ((TextView)findViewById(R.id.currentmorse)).setTextColor(ContextCompat.getColor(maincontext, R.color.darktext));
+                                ((EditText)findViewById(R.id.textinput)).setTextColor(ContextCompat.getColor(maincontext, R.color.darktext));
+                                ((TextView)findViewById(R.id.currentmorseletter)).setTextColor(ContextCompat.getColor(maincontext, R.color.darktext));
+                                ((TextView)findViewById(R.id.progresstext)).setTextColor(ContextCompat.getColor(maincontext, R.color.darktext));
+                                ((TextView)findViewById(R.id.speedtext)).setTextColor(ContextCompat.getColor(maincontext, R.color.darktext));
                             }
                         });
                     }
@@ -314,6 +370,11 @@ public class MainActivity extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                             public void run() {
                                 constraintLayout.setBackgroundColor(ContextCompat.getColor(maincontext, R.color.dark));
+                                ((TextView)findViewById(R.id.currentmorse)).setTextColor(ContextCompat.getColor(maincontext, R.color.lighttext));
+                                ((EditText)findViewById(R.id.textinput)).setTextColor(ContextCompat.getColor(maincontext, R.color.lighttext));
+                                ((TextView)findViewById(R.id.currentmorseletter)).setTextColor(ContextCompat.getColor(maincontext, R.color.lighttext));
+                                ((TextView)findViewById(R.id.progresstext)).setTextColor(ContextCompat.getColor(maincontext, R.color.lighttext));
+                                ((TextView)findViewById(R.id.speedtext)).setTextColor(ContextCompat.getColor(maincontext, R.color.lighttext));
                             }
                         });
                     }

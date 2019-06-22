@@ -6,4 +6,6 @@
     <color name="background">#202020</color>
     <color name="dark">#000000</color>
     <color name="light">#FFFFFF</color>
+    <color name="darktext">#000000</color>
+    <color name="lighttext">#FFFFFF</color>
 </resources>
