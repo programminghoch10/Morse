@@ -111,8 +111,18 @@ public class MainActivity extends AppCompatActivity {
                 boxbackground = ((CheckBox)findViewById(R.id.checkBoxbackground)).isChecked();
                 if (boxbackground) {
                     constraintLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.dark));
+                    ((TextView)findViewById(R.id.currentmorse)).setTextColor(ContextCompat.getColor(maincontext, R.color.lighttext));
+                    ((EditText)findViewById(R.id.textinput)).setTextColor(ContextCompat.getColor(maincontext, R.color.lighttext));
+                    ((TextView)findViewById(R.id.currentmorseletter)).setTextColor(ContextCompat.getColor(maincontext, R.color.lighttext));
+                    ((TextView)findViewById(R.id.progresstext)).setTextColor(ContextCompat.getColor(maincontext, R.color.lighttext));
+                    ((TextView)findViewById(R.id.speedtext)).setTextColor(ContextCompat.getColor(maincontext, R.color.lighttext));
                 } else {
                     constraintLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.background));
+                    ((TextView)findViewById(R.id.currentmorse)).setTextColor(ContextCompat.getColor(maincontext, R.color.lighttext));
+                    ((EditText)findViewById(R.id.textinput)).setTextColor(ContextCompat.getColor(maincontext, R.color.lighttext));
+                    ((TextView)findViewById(R.id.currentmorseletter)).setTextColor(ContextCompat.getColor(maincontext, R.color.lighttext));
+                    ((TextView)findViewById(R.id.progresstext)).setTextColor(ContextCompat.getColor(maincontext, R.color.lighttext));
+                    ((TextView)findViewById(R.id.speedtext)).setTextColor(ContextCompat.getColor(maincontext, R.color.lighttext));
                 }
             }
         });
