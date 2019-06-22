@@ -19,8 +19,6 @@ import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.karlotoy.perfectune.instance.PerfectTune;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
     final Context maincontext = this;
     static boolean flash = false;
 
-    static final int MY_PERMISSIONS_REQUEST_CAMERA = 77;
+    static final int PERMISSION_REQUEST_CAMERA = 77;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.CAMERA},
-                        MY_PERMISSIONS_REQUEST_CAMERA);
+                        PERMISSION_REQUEST_CAMERA);
             }
         }
         constraintLayout = (ConstraintLayout)findViewById(R.id.constraintLayout);
@@ -125,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
                                            String permissions[], int[] grantResults) {
 
         switch (requestCode) {
-            case MY_PERMISSIONS_REQUEST_CAMERA: {
+            case PERMISSION_REQUEST_CAMERA: {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {

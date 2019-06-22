@@ -69,6 +69,7 @@ Morse uses 2 different sound libraries at the moment, because of each others bet
 * ConstraintLayout constrainlayout: static reference to the constraintlayout for managing it from second Thread
 * Context context: static reference to the MainActivity context
 * Boolean flash: Variable defining if the flash should be on, used during morsing, processed by a third Thread
+* Int PERMISSION_REQUEST_CAMERA: static int for identifying during the permission request procedure
 
 ### Important functions:
 * onCreate: sets up first time stuff
@@ -113,11 +114,13 @@ or
 
 ### Permissions
 Morse only needs permission to camera for activating the flash, but it of course works fine without flash if it hasn't got the permission yet.
+The camera permission is requested upon start of the app.
+The selection box for flash greys out if the permission is missing or if the device lacks a flash.
 
 ### XML Files
 
 - strings.xml: the default message text and the sound frequency in Hz is defined here
-- colors.xml: here are the standard colors defined
+- colors.xml: the standard colors and the colors for inverting background and text are defined here
 - activity_main.xml: standard layout file for the main activity
 
 
