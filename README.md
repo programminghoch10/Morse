@@ -3,7 +3,13 @@ a simple app made for text to morse conversion
 
 [Download APK](https://github.com/programminghoch10/Morse/raw/master/app/release/app-release.apk)
 
-![Morse Icon 33.8KiB](https://github.com/programminghoch10/Morse/raw/master/icon/morse.png)
+Available on Play Store soon!
+
+![Morse Icon 33.8KiB](pictures/morse.png)
+
+![Morse UI 1](pictures/ui1.png)
+![Morse UI 2](pictures/ui2.png)
+![Morse UI 3](pictures/ui3.png)
 
 ## Features
 Morse is made to convert any given Text into Morse.

@@ -5,10 +5,10 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.os.Looper;
-import android.support.constraint.ConstraintLayout;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
-
+    
     final String TAG = "main";
     static int speedbar = 240;
     static boolean active = false;
@@ -35,9 +35,9 @@ public class MainActivity extends AppCompatActivity {
     static ConstraintLayout constraintLayout;
     final Context maincontext = this;
     static boolean flash = false;
-
+    
     static final int PERMISSION_REQUEST_CAMERA = 77;
-
+    
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -47,11 +47,11 @@ public class MainActivity extends AppCompatActivity {
                 != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                     Manifest.permission.READ_CONTACTS)) {
-
+                
                 // Show an expanation to the user *asynchronously* -- don't block
                 // this thread waiting for the user's response! After the user
                 // sees the explanation, try again to request the permission.
-
+                
             } else {
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.CAMERA},
@@ -60,17 +60,17 @@ public class MainActivity extends AppCompatActivity {
         }
         constraintLayout = (ConstraintLayout)findViewById(R.id.constraintLayout);
         ((SeekBar) findViewById(R.id.speedbar)).setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-
+            
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 // TODO Auto-generated method stub
             }
-
+            
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
                 // TODO Auto-generated method stub
             }
-
+            
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 switch (progress) {
@@ -82,23 +82,23 @@ public class MainActivity extends AppCompatActivity {
                 }
                 switch (progress) {
                     case 0: runOnUiThread(new Runnable() {
-                                public void run() {
-                                    ((CheckBox)findViewById(R.id.checkBoxflash)).setChecked(false);
-                                    ((CheckBox)findViewById(R.id.checkBoxflash)).setEnabled(false);
-                                }
-                            });
-                            break;
+                        public void run() {
+                            ((CheckBox)findViewById(R.id.checkBoxflash)).setChecked(false);
+                            ((CheckBox)findViewById(R.id.checkBoxflash)).setEnabled(false);
+                        }
+                    });
+                        break;
                     case 1:
                     case 2:
                     case 3: runOnUiThread(new Runnable() {
-                                public void run() {
-                                    if (flashavailable) {
-                                        ((CheckBox)findViewById(R.id.checkBoxflash)).setEnabled(true);
-                                    }
-                                }
-                            });
-
-                            break;
+                        public void run() {
+                            if (flashavailable) {
+                                ((CheckBox)findViewById(R.id.checkBoxflash)).setEnabled(true);
+                            }
+                        }
+                    });
+                        
+                        break;
                     default: break;
                 }
                 ((TextView)findViewById(R.id.speedtext)).setText("Speed: "+speedbar+"ms");
@@ -127,11 +127,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
+    
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
-
+        
         switch (requestCode) {
             case PERMISSION_REQUEST_CAMERA: {
                 // If request is cancelled, the result arrays are empty.
@@ -151,12 +151,12 @@ public class MainActivity extends AppCompatActivity {
                 }
                 return;
             }
-
+            
             // other 'case' lines to check for other
             // permissions this app might request
         }
     }
-
+    
     public void encodebuttonclick(View view) {
         boxflash = ((CheckBox)findViewById(R.id.checkBoxflash)).isChecked();
         boxtone = ((CheckBox)findViewById(R.id.checkBoxsound)).isChecked();
@@ -167,7 +167,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         final EditText inputtext = (EditText)findViewById(R.id.textinput);
-
+        
         worker = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -194,11 +194,11 @@ public class MainActivity extends AppCompatActivity {
                 ((Button)findViewById(R.id.button)).setText(button);
             }
         });
-
+        
     }
-
-
-
+    
+    
+    
     private Map<String, Integer> morse = new HashMap<String, Integer>() {
         {
             put("A", 13);
@@ -273,10 +273,10 @@ public class MainActivity extends AppCompatActivity {
             put("WORD", 7);
         }
     };
-
+    
     public boolean morse(String cleartext, int frequency) {
         int counter = 1;
-
+        
         if(flashavailable) {
             Thread camworker;
             camworker = new Thread(new Runnable() {
