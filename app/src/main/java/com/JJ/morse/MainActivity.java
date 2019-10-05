@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     static ConstraintLayout constraintLayout;
     final Context maincontext = this;
     static boolean flash = false;
+    static boolean flashready = false;
     
     static final int PERMISSION_REQUEST_CAMERA = 77;
     
@@ -42,13 +43,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         flashavailable =  getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH);
+		((CheckBox)findViewById(R.id.checkBoxflash)).setEnabled(flashavailable);
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.READ_CONTACTS)) {
+                    Manifest.permission.CAMERA)) {
                 
-                // Show an expanation to the user *asynchronously* -- don't block
+                // Show an explanation to the user *asynchronously* -- don't block
                 // this thread waiting for the user's response! After the user
                 // sees the explanation, try again to request the permission.
                 
@@ -63,12 +65,10 @@ public class MainActivity extends AppCompatActivity {
             
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                // TODO Auto-generated method stub
             }
             
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-                // TODO Auto-generated method stub
             }
             
             @Override
@@ -81,23 +81,24 @@ public class MainActivity extends AppCompatActivity {
                     default: speedbar = 240; break;
                 }
                 switch (progress) {
-                    case 0: runOnUiThread(new Runnable() {
-                        public void run() {
-                            ((CheckBox)findViewById(R.id.checkBoxflash)).setChecked(false);
-                            ((CheckBox)findViewById(R.id.checkBoxflash)).setEnabled(false);
-                        }
-                    });
+                    case 0:
+                    	runOnUiThread(new Runnable() {
+							public void run() {
+								((CheckBox)findViewById(R.id.checkBoxflash)).setChecked(false);
+								((CheckBox)findViewById(R.id.checkBoxflash)).setEnabled(false);
+							}
+						});
                         break;
                     case 1:
                     case 2:
-                    case 3: runOnUiThread(new Runnable() {
-                        public void run() {
-                            if (flashavailable) {
-                                ((CheckBox)findViewById(R.id.checkBoxflash)).setEnabled(true);
-                            }
-                        }
-                    });
-                        
+                    case 3:
+                    	runOnUiThread(new Runnable() {
+							public void run() {
+								if (flashavailable) {
+									((CheckBox)findViewById(R.id.checkBoxflash)).setEnabled(true);
+								}
+							}
+						});
                         break;
                     default: break;
                 }
@@ -173,7 +174,7 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 Looper.prepare();
                 active = true;
-                boolean result = morse(inputtext.getText().toString(),Integer.valueOf(getString(R.string.frequency)));
+                boolean result = morse(inputtext.getText().toString(), getResources().getInteger(R.integer.frequency));
                 if (result) {
                     updateinfo(100,"MORSE","made by JJ","Morse!");
                     active = false;
@@ -276,6 +277,7 @@ public class MainActivity extends AppCompatActivity {
     
     public boolean morse(String cleartext, int frequency) {
         int counter = 1;
+        flashready = !flashavailable;
         
         if(flashavailable) {
             Thread camworker;
@@ -287,8 +289,11 @@ public class MainActivity extends AppCompatActivity {
                     try {
                         camera = Camera.open();
                         p = camera.getParameters();
-                    } catch (Exception e) {}
+                    } catch (Exception e) {
+                    	flashready = true;
+					}
                     boolean prevflash = flash;
+                    flashready = true;
                     while (active) {
                         if (boxflash && flash != prevflash) {
                             if (flash) {
@@ -328,6 +333,11 @@ public class MainActivity extends AppCompatActivity {
             });
             camworker.start();
         }
+		while (!flashready) {
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException ignored) {}
+		}
         //soundgenerator2 soundgen = new soundgenerator2();
         for (final char character: cleartext.toUpperCase().toCharArray()) {
             if (Character.toString(character).equals(" ") || morse.get(Character.toString(character)) == null) {
