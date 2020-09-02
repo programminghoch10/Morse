@@ -12,3 +12,5 @@
 /captures
 .externalNativeBuild
 app/release/app-release.aab
+.idea/markdown-navigator.xml
+.idea/markdown-navigator-enh.xml
