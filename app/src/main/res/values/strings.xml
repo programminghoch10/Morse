@@ -1,4 +1,18 @@
 <resources>
     <string name="app_name">Morse</string>
-    <string name="defaultInputText">Message</string>
+    <string name="defaultMorseText">Message</string>
+    <string name="frequency">frequency</string>
+    <string name="frequencyhz">Hz</string>
+    <string name="titletext">MORSE</string>
+    <string name="buttonstart">MORSE!</string>
+    <string name="buttonstop">STOP</string>
+    <string name="buttonstopping">stopping…</string>
+    <string name="titlecancelled">cancelled</string>
+    <string name="titlefinished">finished</string>
+    <string name="percent"> %</string>
+    <string name="speedtext">Speed: </string>
+    <string name="speedtextms">ms</string>
+    <string name="checkboxbackground">Background</string>
+    <string name="checkboxsound">Sound</string>
+    <string name="checkboxflash">Flash</string>
 </resources>

@@ -5,7 +5,7 @@
     android:id="@+id/constraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
+    android:background="@color/normalbackground"
     tools:context=".MainActivity">
 
     <ScrollView
@@ -25,7 +25,7 @@
                 android:layout_marginEnd="8dp"
                 android:ems="10"
                 android:inputType="textPersonName"
-                android:text="@string/defaultInputText"
+                android:text="@string/defaultMorseText"
                 android:textColor="@color/lighttext"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"

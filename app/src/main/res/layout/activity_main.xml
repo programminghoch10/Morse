@@ -5,7 +5,7 @@
     android:id="@+id/constraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
+    android:background="@color/normalbackground"
     tools:context=".MainActivity">
 
     <ScrollView
@@ -33,7 +33,7 @@
                 android:layout_marginEnd="8dp"
                 android:ems="10"
                 android:inputType="textPersonName"
-                android:text="@string/defaultInputText"
+                android:text="@string/defaultMorseText"
                 android:textColor="@color/lighttext" />
 
             <TextView
@@ -41,7 +41,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="40dp"
-                android:text="Morse"
+                android:text="@string/titletext"
                 android:textColor="@color/lighttext"
                 android:textSize="36sp" />
 
@@ -73,7 +73,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:onClick="encodebuttonclick"
-                android:text="Morse!" />
+                android:text="@string/buttonstart" />
 
             <LinearLayout
                 android:id="@+id/linearLayout"
@@ -86,14 +86,14 @@
                     android:id="@+id/checkBoxbackground"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Background"
+                    android:text="@string/checkboxbackground"
                     android:textColor="@color/lighttext" />
 
                 <CheckBox
                     android:id="@+id/checkBoxsound"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Sound"
+                    android:text="@string/checkboxsound"
                     android:textColor="@color/lighttext" />
 
                 <CheckBox
@@ -101,7 +101,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checked="false"
-                    android:text="Flash"
+                    android:text="@string/checkboxflash"
                     android:textColor="@color/lighttext" />
 
             </LinearLayout>
@@ -119,7 +119,23 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:text="Speed: 240ms"
+                android:textColor="@color/lighttext" />
+
+            <EditText
+                android:id="@+id/frequency"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@string/frequency"
+                android:inputType="number"
+                android:singleLine="true" />
+
+            <TextView
+                android:id="@+id/frequencytext"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="@string/frequencyhz"
                 android:textColor="@color/lighttext" />
 
         </LinearLayout>

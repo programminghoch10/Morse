@@ -76,9 +76,9 @@ public class MainActivity extends AppCompatActivity {
                 switch (progress) {
                     case 0: speedbar = 60; break;
                     case 1: speedbar = 120; break;
+                    default:
                     case 2: speedbar = 240; break;
                     case 3: speedbar = 1200; break;
-                    default: speedbar = 240; break;
                 }
                 switch (progress) {
                     case 0:
@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     default: break;
                 }
-                ((TextView)findViewById(R.id.speedtext)).setText("Speed: "+speedbar+"ms");
+                ((TextView)findViewById(R.id.speedtext)).setText(getResources().getString(R.string.speedtext)+speedbar+getResources().getString(R.string.speedtextms));
             }
         });
         final Context context = this;
@@ -117,11 +117,12 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+       ((EditText)findViewById(R.id.frequency)).setText(String.valueOf(getResources().getInteger(R.integer.defaultfrequency)));
     }
     
     @Override
     public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
+                                           String[] permissions, int[] grantResults) {
         
         switch (requestCode) {
             case PERMISSION_REQUEST_CAMERA: {
@@ -154,22 +155,23 @@ public class MainActivity extends AppCompatActivity {
         boxbackground = ((CheckBox)findViewById(R.id.checkBoxbackground)).isChecked();
         if (active) {
             active = false;
-            ((Button)findViewById(R.id.button)).setText("stopping...");
+            ((Button)findViewById(R.id.button)).setText(getResources().getString(R.string.buttonstopping));
             return;
         }
         final EditText inputtext = (EditText)findViewById(R.id.textinput);
+        final EditText frequencyinput = (EditText) findViewById(R.id.frequency);
         
         worker = new Thread(new Runnable() {
             @Override
             public void run() {
                 Looper.prepare();
                 active = true;
-                boolean result = morse(inputtext.getText().toString(), getResources().getInteger(R.integer.frequency));
+                boolean result = morse(inputtext.getText().toString(), Integer.parseInt(frequencyinput.getText().toString()));
                 if (result) {
-                    updateinfo(100,"MORSE","made by JJ","Morse!");
+                    updateinfo(100,getResources().getString(R.string.titletext),getResources().getString(R.string.titlefinished),getResources().getString(R.string.buttonstart));
                     active = false;
                 } else {
-                    updateinfo(0,"MORSE","cancelled","Morse!");
+                    updateinfo(0,getResources().getString(R.string.titletext),getResources().getString(R.string.titlecancelled),getResources().getString(R.string.buttonstart));
                 }
             }
         });
@@ -180,7 +182,7 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 ((TextView)findViewById(R.id.currentmorseletter)).setText(currentmorsetext);
                 ((ProgressBar)findViewById(R.id.morseprogress)).setProgress(progress);
-                ((TextView)findViewById(R.id.progresstext)).setText(progress + " %");
+                ((TextView)findViewById(R.id.progresstext)).setText(progress + getResources().getString(R.string.percent));
                 ((TextView)findViewById(R.id.currentmorse)).setText(currentmorse);
                 ((Button)findViewById(R.id.button)).setText(button);
             }
