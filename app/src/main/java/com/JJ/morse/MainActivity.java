@@ -111,19 +111,9 @@ public class MainActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 boxbackground = ((CheckBox)findViewById(R.id.checkBoxbackground)).isChecked();
                 if (boxbackground) {
-                    constraintLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.dark));
-                    ((TextView)findViewById(R.id.currentmorse)).setTextColor(ContextCompat.getColor(maincontext, R.color.lighttext));
-                    ((EditText)findViewById(R.id.textinput)).setTextColor(ContextCompat.getColor(maincontext, R.color.lighttext));
-                    ((TextView)findViewById(R.id.currentmorseletter)).setTextColor(ContextCompat.getColor(maincontext, R.color.lighttext));
-                    ((TextView)findViewById(R.id.progresstext)).setTextColor(ContextCompat.getColor(maincontext, R.color.lighttext));
-                    ((TextView)findViewById(R.id.speedtext)).setTextColor(ContextCompat.getColor(maincontext, R.color.lighttext));
+                    design_black();
                 } else {
-                    constraintLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.background));
-                    ((TextView)findViewById(R.id.currentmorse)).setTextColor(ContextCompat.getColor(maincontext, R.color.lighttext));
-                    ((EditText)findViewById(R.id.textinput)).setTextColor(ContextCompat.getColor(maincontext, R.color.lighttext));
-                    ((TextView)findViewById(R.id.currentmorseletter)).setTextColor(ContextCompat.getColor(maincontext, R.color.lighttext));
-                    ((TextView)findViewById(R.id.progresstext)).setTextColor(ContextCompat.getColor(maincontext, R.color.lighttext));
-                    ((TextView)findViewById(R.id.speedtext)).setTextColor(ContextCompat.getColor(maincontext, R.color.lighttext));
+                    design_normal();
                 }
             }
         });
@@ -359,16 +349,7 @@ public class MainActivity extends AppCompatActivity {
                     if (!active) {return false;}
                     flash = true;
                     if (boxbackground) {
-                        runOnUiThread(new Runnable() {
-                            public void run() {
-                                constraintLayout.setBackgroundColor(ContextCompat.getColor(maincontext, R.color.light));
-                                ((TextView)findViewById(R.id.currentmorse)).setTextColor(ContextCompat.getColor(maincontext, R.color.darktext));
-                                ((EditText)findViewById(R.id.textinput)).setTextColor(ContextCompat.getColor(maincontext, R.color.darktext));
-                                ((TextView)findViewById(R.id.currentmorseletter)).setTextColor(ContextCompat.getColor(maincontext, R.color.darktext));
-                                ((TextView)findViewById(R.id.progresstext)).setTextColor(ContextCompat.getColor(maincontext, R.color.darktext));
-                                ((TextView)findViewById(R.id.speedtext)).setTextColor(ContextCompat.getColor(maincontext, R.color.darktext));
-                            }
-                        });
+                        design_white();
                     }
                     if(boxtone) {
                         //using 2 soundengines because of each better performances in different speeds
@@ -385,16 +366,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                     flash = false;
                     if (boxbackground) {
-                        runOnUiThread(new Runnable() {
-                            public void run() {
-                                constraintLayout.setBackgroundColor(ContextCompat.getColor(maincontext, R.color.dark));
-                                ((TextView)findViewById(R.id.currentmorse)).setTextColor(ContextCompat.getColor(maincontext, R.color.lighttext));
-                                ((EditText)findViewById(R.id.textinput)).setTextColor(ContextCompat.getColor(maincontext, R.color.lighttext));
-                                ((TextView)findViewById(R.id.currentmorseletter)).setTextColor(ContextCompat.getColor(maincontext, R.color.lighttext));
-                                ((TextView)findViewById(R.id.progresstext)).setTextColor(ContextCompat.getColor(maincontext, R.color.lighttext));
-                                ((TextView)findViewById(R.id.speedtext)).setTextColor(ContextCompat.getColor(maincontext, R.color.lighttext));
-                            }
-                        });
+                        design_black();
                     }
                     try {Thread.sleep(morse.get("PAUSE")* speedbar);} catch (InterruptedException e) {e.printStackTrace();}
                 }
@@ -407,5 +379,44 @@ public class MainActivity extends AppCompatActivity {
         }
         return true;
     }
+    
+    int[] designchangeids = {
+            R.id.currentmorse,
+            R.id.textinput,
+            R.id.currentmorseletter,
+            R.id.progresstext,
+            R.id.speedtext,
+            R.id.frequency,
+            R.id.frequencytext,
+    };
+    
+    void design_normal() {
+        apply_design(R.color.normaltext, R.color.normalbackground);
+    }
+    
+    void design_white() {
+        apply_design(R.color.darktext, R.color.lightbackground);
+    }
+    
+    void design_black() {
+    apply_design(R.color.lighttext, R.color.darkbackground);
+    }
+    
+    void apply_design(final int colorid, final int backgroundcolorid) {
+        runOnUiThread(new Runnable() {
+            public void run() {
+                constraintLayout.setBackgroundColor(ContextCompat.getColor(maincontext, backgroundcolorid));
+                for (int item : designchangeids) {
+                    try {
+                        ((TextView)findViewById(item)).setTextColor(ContextCompat.getColor(maincontext, colorid));
+                    } catch (Exception ignored) {}
+                    try {
+                        ((EditText)findViewById(item)).setTextColor(ContextCompat.getColor(maincontext, colorid));
+                    } catch (Exception ignored) {}
+                }
+            }
+        });
+    }
+    
 }
 

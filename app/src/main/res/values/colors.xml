@@ -3,9 +3,10 @@
     <color name="colorPrimary">#FFFFFF</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
-    <color name="background">#202020</color>
-    <color name="dark">#000000</color>
-    <color name="light">#FFFFFF</color>
+    <color name="normalbackground">#202020</color>
+    <color name="darkbackground">#000000</color>
+    <color name="lightbackground">#FFFFFF</color>
+    <color name="normaltext">#FFFFFF</color>
     <color name="darktext">#000000</color>
     <color name="lighttext">#FFFFFF</color>
 </resources>
